@@ -1,0 +1,12 @@
+# Ignore folder named 'out'
+
+out/
+
+# Ignore Test file
+
+Test*
+
+# Ignore idea folder
+
+.idea/
+lab1-spos.iml
