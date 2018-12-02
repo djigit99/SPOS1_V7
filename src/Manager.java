@@ -25,15 +25,15 @@ public class Manager {
             public void keyPressed(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     try {
-                        System.out.println("kek");
-                        textArea.append("kek");
+
                         BufferedWriter brF = new BufferedWriter(new FileWriter(new File("/home/andrii/IdeaProjects/lab1-spos/src/pipeFexit")));
-                        brF.write("fuck off");
+                        brF.write("fuck off\n");
                         brF.flush();
 
                         BufferedWriter brG = new BufferedWriter(new FileWriter(new File("/home/andrii/IdeaProjects/lab1-spos/src/pipeGexit")));
-                        brG.write("fuck off");
+                        brG.write("fuck off\n");
                         brG.flush();
+
                     } catch (IOException exc) {}
                 }
             }
@@ -58,15 +58,33 @@ public class Manager {
 
         BufferedReader br = new BufferedReader(new FileReader(new File("/home/andrii/IdeaProjects/lab1-spos/src/pipe")));
 
-        int count = 0;
+        int valF = 0, valG = 0;
+        boolean f_is_finished = false;
+        boolean g_is_finished = false;
         String msg;
-        while (count < 2) {
+        while (f_is_finished == false || g_is_finished == false) {
             //Process
             msg = br.readLine();
-            System.out.println(msg);
-            if (msg != null)
-                count++;
+            if (msg != null && msg.equals("kaput")) {
+                if (valF!=0 && valG != 0) {
+                    System.out.println("Ans = " + String.valueOf(valF + valG));
+                    Runtime.getRuntime().exit(0);
+                } else
+                    Runtime.getRuntime().exit(1);
+            }
+            if (msg == null)
+                break;
+            String func = msg.substring(0,2);
+            if (func.charAt(0) == 'F') {
+                valF = Integer.parseInt(msg.substring(2));
+                f_is_finished = true;
+            } else {
+                valG = Integer.parseInt(msg.substring(2));
+                g_is_finished = true;
+            }
         }
-
+        br.close();
+        System.out.println("Ans = " + String.valueOf(valF + valG));
+        Runtime.getRuntime().exit(0);
     }
 }

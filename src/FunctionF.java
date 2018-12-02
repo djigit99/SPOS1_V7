@@ -1,12 +1,12 @@
 import java.io.*;
 import java.util.Random;
 
-class MyThread extends Thread {
+class MyThreadF extends Thread {
 
     private BufferedReader br = null;
     private BufferedWriter bw;
 
-    public MyThread(BufferedWriter bw ) {
+    public MyThreadF(BufferedWriter bw ) {
         this.bw = bw;
     }
 
@@ -25,14 +25,13 @@ class MyThread extends Thread {
             try {
                 msg = br.readLine();
             } catch (IOException e) {}
-
             if (msg == null)
                 break;
             try {
-                bw.write("kaput");
+                bw.write("kaput\n");
                 bw.flush();
             } catch (IOException e) {}
-            Runtime.getRuntime().exit(0);
+            Runtime.getRuntime().exit(1);
         }
     }
 }
@@ -45,7 +44,7 @@ public class FunctionF {
 
         BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/home/andrii/IdeaProjects/lab1-spos/src/pipe")));
 
-        MyThread thread = new MyThread(bw);
+        MyThreadF thread = new MyThreadF(bw);
         thread.start();
 
         int result = 0;
@@ -68,8 +67,8 @@ public class FunctionF {
         case 6:
             while(true);
 		}
-		
-		bw.write(String.valueOf(result));
+		System.out.println("paka");
+		bw.write("F:" + String.valueOf(result) + "\n");
 		bw.flush();
         System.out.println("Process F finished");
         Runtime.getRuntime().exit(0);
