@@ -67,7 +67,6 @@ public class FunctionF {
         case 6:
             while(true);
 		}
-		System.out.println("paka");
 		bw.write("F:" + String.valueOf(result) + "\n");
 		bw.flush();
         System.out.println("Process F finished");

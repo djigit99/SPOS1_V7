@@ -51,7 +51,7 @@ public class FunctionG {
 
         switch (testVariant) {
         case 1:
-            Thread.sleep(6000l);
+            Thread.sleep(9000l);
             result =  1;
             break;
         case 2:
@@ -60,7 +60,7 @@ public class FunctionG {
         case 3:
             while (true) ;
         case 4:
-            result = 0;
+            result = 1;
             break;
         case 5:
             while (true) ;
