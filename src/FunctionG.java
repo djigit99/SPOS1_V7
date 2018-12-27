@@ -27,12 +27,25 @@ class MyThreadG extends Thread {
                 msg = br.readLine();
             } catch (IOException e) {}
             if (msg == null)
-                break;
-            try {
-                bw.write("kaput\n");
-                bw.flush();
-            } catch (IOException e) {}
-            Runtime.getRuntime().exit(1);
+                continue;
+
+            if (msg.equals("cancel")) {
+                try {
+                    bw.write("cancel\n");
+                    bw.flush();
+                } catch (IOException e) {}
+                System.out.println("Process finished by cancel");
+                Runtime.getRuntime().exit(0);
+            }
+
+            if (msg.equals("terminated")) {
+                try {
+                    bw.write("terminated\n");
+                    bw.flush();
+                } catch (IOException e) {}
+                System.out.println("Process finished by ESC");
+                Runtime.getRuntime().exit(0);
+            }
         }
     }
 }
@@ -55,17 +68,17 @@ public class FunctionG {
             result =  1;
             break;
         case 2:
-            result = rand.nextInt(1000);
+            result = 2;
             break;
         case 3:
             while (true) ;
         case 4:
-            result = 1;
+            result = 0;
             break;
         case 5:
             while (true) ;
         case 6:
-            result = rand.nextInt(1000);
+            result = 5;
         }
         bw.write("G:" + String.valueOf(result) + "\n");
         bw.flush();

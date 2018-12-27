@@ -14,11 +14,10 @@ class Prompt extends Thread {
     }
 
     @Override
-    public synchronized void run() {
+    public void run() {
         textArea.append("Choose the option:\n1) continue;\n2) continue without prompt\n3) cancel\n");
         while (isPromt) {
             try {
-                wait(5000);
                 Scanner sc = new Scanner(System.in);
                 System.out.println("Enter your choise:");
                 ans = sc.nextInt();
@@ -26,19 +25,21 @@ class Prompt extends Thread {
                 if (ans == 2) {
                     isPromt = false;
                     textArea.append("Prompt off\n");
+                    break;
                 }
                 if (ans == 3) {
                     try {
                         BufferedWriter brF = new BufferedWriter(new FileWriter(new File("/home/andrii/IdeaProjects/lab1-spos/src/pipeFexit")));
-                        brF.write("terminated\n");
+                        brF.write("cancel\n");
                         brF.flush();
 
                         BufferedWriter brG = new BufferedWriter(new FileWriter(new File("/home/andrii/IdeaProjects/lab1-spos/src/pipeGexit")));
-                        brG.write("terminated\n");
+                        brG.write("cancel\n");
                         brG.flush();
                     } catch (IOException e) {
                     }
                 }
+                Thread.sleep(5000);
             } catch (InterruptedException exp) {
             }
         }
@@ -94,15 +95,18 @@ public class Manager {
         frame.add(textArea);
         frame.setVisible(true);
 
+        try {
+            Thread.sleep(1000);
+        }  catch (InterruptedException exp) {}
 
         textArea.append("Process F started\n");
-        ProcessBuilder pbF = new ProcessBuilder("java", "FunctionF", "1");
-        pbF.directory(new File("/home/andrii/IdeaProjects/lab1-spos/out/"));
+        ProcessBuilder pbF = new ProcessBuilder("java", "FunctionF", "3");
+        pbF.directory(new File("/home/andrii/eclipse-workspace/SPOS1_V7/bin/"));
         Process pF = pbF.start();
 
         textArea.append("Process G started\n");
-        ProcessBuilder pbG = new ProcessBuilder("java", "FunctionG", "1");
-        pbG.directory(new File("/home/andrii/IdeaProjects/lab1-spos/out/"));
+        ProcessBuilder pbG = new ProcessBuilder("java", "FunctionG", "3");
+        pbG.directory(new File("/home/andrii/eclipse-workspace/SPOS1_V7/bin/"));
         Process pG = pbG.start();
 
         try {
@@ -116,34 +120,55 @@ public class Manager {
         boolean f_is_finished = false;
         boolean g_is_finished = false;
         String msg;
-        while (f_is_finished == false || g_is_finished == false) {
+        while (true) {
             //Process
             msg = br.readLine();
-            if (msg != null && msg.equals("kaput")) {
-                if (valF!=0 && valG != 0) {
-                    System.out.println("Ans = " + String.valueOf(valF + valG));
-                    Runtime.getRuntime().exit(0);
-                } else {
-                    if (valF == 0)
-                        System.out.println("Function F is not computed");
-                    if (valG == 0)
-                        System.out.println("Function G is not computed");
-                    Runtime.getRuntime().exit(1);
-                }
-            }
+
             if (msg == null)
-                break;
+                continue;
+
+            if (msg.equals("terminated")) {
+                System.out.println("Program terminated");
+                br.close();
+                Runtime.getRuntime().exit(1);
+            }
+
+            if (msg.equals("cancel")) {
+                    if (f_is_finished == false) {
+                        System.out.println("FunctionF is not computed. Ans = unknown.");
+                        br.close();
+                        Runtime.getRuntime().exit(0);
+                    } else if (g_is_finished == false) {
+                        System.out.println("FunctionG is not computed. Ans = unknown.");
+                        br.close();
+                        Runtime.getRuntime().exit(0);
+                    }
+
+            }
+
             String func = msg.substring(0,2);
             if (func.charAt(0) == 'F') {
                 valF = Integer.parseInt(msg.substring(2));
                 f_is_finished = true;
-            } else {
+            } else if (func.charAt(0) == 'G')  {
                 valG = Integer.parseInt(msg.substring(2));
                 g_is_finished = true;
             }
+            if (f_is_finished == true && valF == 0) {
+                System.out.println("F return 0. Ans = 0");
+                br.close();
+                Runtime.getRuntime().exit(0);
+            }
+            if (g_is_finished == true && valG == 0) {
+                System.out.println("G return 0. Ans = 0");
+                br.close();
+                Runtime.getRuntime().exit(0);
+            }
+            if (f_is_finished == true && g_is_finished == true) {
+                System.out.println("Ans = " + String.valueOf(valF + valG));
+                br.close();
+                Runtime.getRuntime().exit(0);
+            }
         }
-        br.close();
-        System.out.println("Ans = " + String.valueOf(valF + valG));
-        Runtime.getRuntime().exit(0);
     }
 }

@@ -25,19 +25,34 @@ class MyThreadF extends Thread {
             try {
                 msg = br.readLine();
             } catch (IOException e) {}
+
             if (msg == null)
-                break;
-            try {
-                bw.write("kaput\n");
-                bw.flush();
-            } catch (IOException e) {}
-            Runtime.getRuntime().exit(1);
+                continue;
+
+            if (msg.equals("cancel")) {
+                try {
+                    bw.write("cancel\n");
+                    bw.flush();
+                } catch (IOException e) {}
+                System.out.println("Process finished by cancel");
+                Runtime.getRuntime().exit(0);
+            }
+
+            if (msg.equals("terminated")) {
+                try {
+                    bw.write("terminated\n");
+                    bw.flush();
+                } catch (IOException e) {}
+                System.out.println("Process finished by ESC");
+                Runtime.getRuntime().exit(0);
+            }
+
         }
     }
 }
 
 public class FunctionF {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
         System.out.println("Process F started");
 		int testVariant = Integer.parseInt(args[0]);
         Random rand = new Random();
@@ -54,7 +69,8 @@ public class FunctionF {
             result = 2;
             break;
         case 2:
-            while ((result = rand.nextInt(101)) > 99) ;
+            Thread.sleep(25000l);
+            result =  5;
             break;
         case 3:
             result = 0;
@@ -62,7 +78,7 @@ public class FunctionF {
         case 4:
             while(true);
         case 5:
-            result = rand.nextInt(1000);
+            result = 5;
             break;
         case 6:
             while(true);
